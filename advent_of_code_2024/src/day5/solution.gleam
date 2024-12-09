@@ -14,24 +14,23 @@ const day = "5"
 
 pub fn main() {
   let input = read_input()
-  io.println("Part 1")
-  let _ = part1(input.0, input.1) |> io.debug()
+  //io.println("Part 1")
+  //let _ = part1(input.0, input.1) |> io.debug()
   io.println("Part 2")
-  let #(result1, fixed1) = part2(input.0, input.1)
+  let #(result1, _fixed1) = part2(input.0, input.1)
   io.debug(result1)
-  io.println("Part 2 option 2")
-  let #(result2, fixed2) = part2_2(input.0, input.1)
-  io.debug(result2)
+  //io.println("Part 2 option 2")
+  //let #(result2, fixed2) = part2_2(input.0, input.1)
+  //io.debug(result2)
 
-  io.println("Comparing fixed updates")
-  list.zip(fixed1, fixed2)
-  |> list.filter(fn(tup) { tup.0 != tup.1 })
-  |> list.each(fn(tup) {
-    todo
-    // io.println("")
-    //io.debug(tup.0)
-    //io.debug(tup.1)
-  })
+  //io.println("Comparing fixed updates")
+  //list.zip(fixed1, fixed2)
+  //|> list.filter(fn(tup) { tup.0 != tup.1 })
+  //|> list.each(fn(tup) {
+  // io.println("")
+  //io.debug(tup.0)
+  //io.debug(tup.1)
+  //})
 }
 
 fn read_input() {
@@ -76,15 +75,28 @@ fn part1(rules, updates) {
 }
 
 fn part2(rules, updates) {
-  let expanded_rules = expand_rules(rules)
+  let rules_dict = get_rules_dict(rules)
   list.fold(updates, #(0, []), fn(acc, update) {
     case is_valid(update, rules) {
       True -> acc
       False -> {
-        let fixed = fix_update(update, expanded_rules)
+        let fixed = fix_update(update, rules_dict)
         #(acc.0 + get_middle_elem(fixed), [fixed, ..acc.1])
       }
     }
+  })
+}
+
+fn get_rules_dict(rules) {
+  list.fold(rules, dict.new(), fn(acc, rule) {
+    let #(a, b) = rule
+    acc
+    |> dict.upsert(a, fn(x) {
+      case x {
+        None -> set.new() |> set.insert(b)
+        Some(set) -> set.insert(set, b)
+      }
+    })
   })
 }
 
@@ -133,21 +145,69 @@ fn expand_rules(rules) {
   })
 }
 
-fn fix_update(update, expanded_rules) {
+fn fix_update(update, rules) {
+  io.println("")
+  io.println("Fixing update:")
+  io.debug(update)
   // reorder items in the update to make it valid
   list.sort(update, fn(a, b) {
-    let a_lt_b = dict.get(expanded_rules, a) |> result.map(set.contains(_, b))
-    let b_lt_a = dict.get(expanded_rules, b) |> result.map(set.contains(_, a))
+    let a_lt_b =
+      dict.get(rules, a)
+      |> result.map(set.contains(_, b))
+      |> result.unwrap(False)
+    let b_lt_a =
+      dict.get(rules, b)
+      |> result.map(set.contains(_, a))
+      |> result.unwrap(False)
+
+    io.print(
+      int.to_string(a)
+      <> " vs "
+      <> int.to_string(b)
+      <> ": a<b="
+      <> bool.to_string(a_lt_b)
+      <> ", b<a="
+      <> bool.to_string(b_lt_a)
+      <> ", result: ",
+    )
     case a_lt_b, b_lt_a {
-      Ok(True), _ -> order.Lt
-      _, Ok(True) -> order.Gt
+      True, _ -> {
+        io.println(int.to_string(a) <> " < " <> int.to_string(b))
+        order.Lt
+      }
+      _, True -> {
+        io.println(int.to_string(a) <> " > " <> int.to_string(b))
+        order.Gt
+      }
       _, _ -> {
-        io.print("No order")
+        io.println("No order")
         order.Eq
       }
     }
   })
-  //|> io.debug()
+  |> io.debug()
+}
+
+fn find_bigger(target, rules, next_vals, visited) {
+  io.println(
+    set.to_list(visited) |> list.map(int.to_string) |> string.join(", "),
+  )
+  case set.contains(next_vals, target) {
+    True -> True
+    False -> {
+      // for each next val run the function iteratively
+      set.to_list(next_vals)
+      |> list.filter(fn(val) { !set.contains(visited, val) })
+      |> list.any(fn(val) {
+        find_bigger(
+          target,
+          rules,
+          dict.get(rules, val) |> result.unwrap(set.new()),
+          set.insert(visited, val),
+        )
+      })
+    }
+  }
 }
 
 // Second take on part 2
