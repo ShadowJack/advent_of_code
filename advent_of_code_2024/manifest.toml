@@ -11,6 +11,7 @@ packages = [
   { name = "gzlib", version = "1.0.1", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "gzlib", source = "hex", outer_checksum = "5E71EF6C973CB61CDF25D1C5CDBD129C481CE432D6FD089FBB4E30B95CCCE935" },
   { name = "pngleam", version = "1.1.0", build_tools = ["gleam"], requirements = ["gleam_stdlib", "gzlib"], otp_app = "pngleam", source = "hex", outer_checksum = "8D17F2C9C6D60BB0579B8744B5693D627276960ED8CF1C057BB33674CC669C97" },
   { name = "simplifile", version = "2.2.0", build_tools = ["gleam"], requirements = ["filepath", "gleam_stdlib"], otp_app = "simplifile", source = "hex", outer_checksum = "0DFABEF7DC7A9E2FF4BB27B108034E60C81BEBFCB7AB816B9E7E18ED4503ACD8" },
+  { name = "trie_again", version = "1.1.2", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "trie_again", source = "hex", outer_checksum = "5B19176F52B1BD98831B57FDC97BD1F88C8A403D6D8C63471407E78598E27184" },
 ]
 
 [requirements]
@@ -21,3 +22,4 @@ glearray = { version = ">= 1.0.0 and < 2.0.0" }
 gleeunit = { version = ">= 1.0.0 and < 2.0.0" }
 pngleam = { version = ">= 1.1.0 and < 2.0.0" }
 simplifile = { version = ">= 2.2.0 and < 3.0.0" }
+trie_again = { version = ">= 1.1.2 and < 2.0.0" }
