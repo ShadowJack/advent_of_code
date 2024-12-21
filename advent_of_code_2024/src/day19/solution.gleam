@@ -2,6 +2,7 @@ import gleam/io
 import gleam/list
 import gleam/result
 import gleam/string
+import glemo
 import simplifile
 import trie
 
@@ -60,6 +61,7 @@ fn part1(input: #(List(String), List(String))) {
 fn part2(input: #(List(String), List(String))) {
   let #(towels, designs) = input
   let towels = build_trie(towels)
+  glemo.init(["combinations_count"])
   list.fold(designs, 0, fn(acc, design) {
     acc + count_combinations(towels, design)
   })
@@ -89,18 +91,21 @@ fn is_valid(towels, design) {
 }
 
 fn count_combinations(towels, design) {
-  case string.is_empty(design) {
-    True -> 1
-    False -> {
-      list.range(string.length(design), 1)
-      |> list.fold(0, fn(sum, i) {
-        let prefix = string.slice(design, 0, i)
-        let suffix = string.slice(design, i, string.length(design) - i)
-        case trie.has_path(towels, prefix |> string.split("")) {
-          True -> sum + count_combinations(towels, suffix)
-          False -> sum
-        }
-      })
+  glemo.memo(#(towels, design), "combinations_count", fn(input) {
+    let #(towels, design) = input
+    case string.is_empty(design) {
+      True -> 1
+      False -> {
+        list.range(string.length(design), 1)
+        |> list.fold(0, fn(sum, i) {
+          let prefix = string.slice(design, 0, i)
+          let suffix = string.slice(design, i, string.length(design) - i)
+          case trie.has_path(towels, prefix |> string.split("")) {
+            True -> sum + count_combinations(towels, suffix)
+            False -> sum
+          }
+        })
+      }
     }
-  }
+  })
 }

@@ -2,12 +2,15 @@
 # You typically do not need to edit this file
 
 packages = [
+  { name = "carpenter", version = "0.3.1", build_tools = ["gleam"], requirements = ["gleam_erlang", "gleam_stdlib"], otp_app = "carpenter", source = "hex", outer_checksum = "7F5AF15A315CF32E8EDD0700BC1E6711618F8049AFE66DFCE82D1161B33F7F1B" },
   { name = "filepath", version = "1.1.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "filepath", source = "hex", outer_checksum = "67A6D15FB39EEB69DD31F8C145BB5A421790581BD6AA14B33D64D5A55DBD6587" },
+  { name = "gleam_erlang", version = "0.33.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "gleam_erlang", source = "hex", outer_checksum = "A1D26B80F01901B59AABEE3475DD4C18D27D58FA5C897D922FCB9B099749C064" },
   { name = "gleam_regexp", version = "1.0.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "gleam_regexp", source = "hex", outer_checksum = "A3655FDD288571E90EE9C4009B719FEF59FA16AFCDF3952A76A125AF23CF1592" },
   { name = "gleam_stdlib", version = "0.45.0", build_tools = ["gleam"], requirements = [], otp_app = "gleam_stdlib", source = "hex", outer_checksum = "206FCE1A76974AECFC55AEBCD0217D59EDE4E408C016E2CFCCC8FF51278F186E" },
   { name = "gleamy_structures", version = "1.1.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "gleamy_structures", source = "hex", outer_checksum = "49C957ACF9857BC76FE13AB8D9C39FF3F5EF5DE9229DB0D15D228865C645DA66" },
   { name = "glearray", version = "1.0.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "glearray", source = "hex", outer_checksum = "B99767A9BC63EF9CC8809F66C7276042E5EFEACAA5B25188B552D3691B91AC6D" },
   { name = "gleeunit", version = "1.2.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "gleeunit", source = "hex", outer_checksum = "F7A7228925D3EE7D0813C922E062BFD6D7E9310F0BEE585D3A42F3307E3CFD13" },
+  { name = "glemo", version = "1.0.1", build_tools = ["gleam"], requirements = ["carpenter", "gleam_stdlib"], otp_app = "glemo", source = "hex", outer_checksum = "F66AF7DF6D011AC0097E12FDE82BCC9AE74CBBAC0A71F35CBBFF3070F6E99D81" },
   { name = "gzlib", version = "1.0.1", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "gzlib", source = "hex", outer_checksum = "5E71EF6C973CB61CDF25D1C5CDBD129C481CE432D6FD089FBB4E30B95CCCE935" },
   { name = "pngleam", version = "1.1.0", build_tools = ["gleam"], requirements = ["gleam_stdlib", "gzlib"], otp_app = "pngleam", source = "hex", outer_checksum = "8D17F2C9C6D60BB0579B8744B5693D627276960ED8CF1C057BB33674CC669C97" },
   { name = "simplifile", version = "2.2.0", build_tools = ["gleam"], requirements = ["filepath", "gleam_stdlib"], otp_app = "simplifile", source = "hex", outer_checksum = "0DFABEF7DC7A9E2FF4BB27B108034E60C81BEBFCB7AB816B9E7E18ED4503ACD8" },
@@ -20,6 +23,7 @@ gleam_stdlib = { version = ">= 0.34.0 and < 2.0.0" }
 gleamy_structures = { version = ">= 1.1.0 and < 2.0.0" }
 glearray = { version = ">= 1.0.0 and < 2.0.0" }
 gleeunit = { version = ">= 1.0.0 and < 2.0.0" }
+glemo = { version = ">= 1.0.1 and < 2.0.0" }
 pngleam = { version = ">= 1.1.0 and < 2.0.0" }
 simplifile = { version = ">= 2.2.0 and < 3.0.0" }
 trie_again = { version = ">= 1.1.2 and < 2.0.0" }
