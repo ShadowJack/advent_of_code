@@ -7,6 +7,7 @@ import gleam/result
 import gleam/set
 import gleam/string
 import glearray
+import glemo
 import simplifile
 
 const day = "21"
@@ -41,8 +42,11 @@ pub type Dir {
 
 pub fn main() {
   let input = read_input()
+  glemo.init(["find_dir_sequence", "find_dir_sequence_2nd"])
   io.println("Part 1")
   let _ = part1(input) |> io.debug()
+  io.println("Part 2")
+  let _ = part2(input) |> io.debug()
 }
 
 fn read_input() {
@@ -64,10 +68,18 @@ fn read_input() {
 }
 
 fn part1(input: List(List(String))) {
+  calc_result(input, 1)
+}
+
+fn part2(input: List(List(String))) {
+  calc_result(input, 24)
+}
+
+fn calc_result(input, depth) {
   input
   |> list.fold(0, fn(acc, code) {
     io.println("Code: " <> string.inspect(code))
-    let seq = find_sequence(code)
+    let seq_len = find_sequence(code, depth)
     //|> io.debug()
     let num_value =
       code
@@ -75,25 +87,31 @@ fn part1(input: List(List(String))) {
       |> string.join("")
       |> int.parse()
       |> result.unwrap(0)
-    acc + num_value * list.length(seq)
+    acc + num_value * seq_len
   })
 }
 
-fn find_sequence(code: List(String)) {
-  do_find_num_sequence(code, "A", [])
+fn find_sequence(code: List(String), depth) {
+  do_find_num_sequence(code, "A", 0, depth)
 }
 
-fn do_find_num_sequence(queue: List(String), last_pos: String, acc) {
+fn do_find_num_sequence(queue: List(String), last_pos: String, acc, depth) {
   case queue {
-    [] -> acc |> list.reverse() |> list.flatten()
+    [] -> acc
     [next_pos, ..rest] -> {
-      let seq = find_dir_sequence(last_pos, next_pos)
-      do_find_num_sequence(rest, next_pos, [seq, ..acc])
+      let seq =
+        glemo.memo(
+          #(last_pos, next_pos, depth),
+          "find_dir_sequence",
+          find_dir_sequence,
+        )
+      do_find_num_sequence(rest, next_pos, acc + seq, depth)
     }
   }
 }
 
-fn find_dir_sequence(last_pos, next_pos) {
+fn find_dir_sequence(input) {
+  let #(last_pos, next_pos, depth) = input
   // Ex. 2 -> 9
   // find all options grouped by equal operations and sorted differently
   // make sure to filter out the ones that are not possible
@@ -116,27 +134,33 @@ fn find_dir_sequence(last_pos, next_pos) {
     is_valid
   })
   //|> io.debug()
-  |> list.map(find_sequence_2nd(_, 24))
-  |> list.sort(fn(a, b) { int.compare(list.length(a), list.length(b)) })
+  |> list.map(find_sequence_2nd(_, depth))
+  |> list.sort(int.compare)
   |> list.first()
-  |> result.unwrap([])
+  |> result.unwrap(0)
 }
 
 fn find_sequence_2nd(dir_seq, depth) {
-  do_find_sequence_2nd(dir_seq, A, [], depth)
+  do_find_sequence_2nd(dir_seq, A, 0, depth)
 }
 
 fn do_find_sequence_2nd(queue: List(Dir), last_pos: Dir, acc, depth) {
   case queue {
-    [] -> acc |> list.reverse() |> list.flatten()
+    [] -> acc
     [next_pos, ..rest] -> {
-      let seq = find_dir_sequence_2nd(last_pos, next_pos, depth)
-      do_find_sequence_2nd(rest, next_pos, [seq, ..acc], depth)
+      let seq =
+        glemo.memo(
+          #(last_pos, next_pos, depth),
+          "find_dir_sequence_2nd",
+          find_dir_sequence_2nd,
+        )
+      do_find_sequence_2nd(rest, next_pos, acc + seq, depth)
     }
   }
 }
 
-fn find_dir_sequence_2nd(last_pos, next_pos, depth) {
+fn find_dir_sequence_2nd(input) {
+  let #(last_pos, next_pos, depth) = input
   // Ex. Up -> Left
   // find all options grouped by equal operations and sorted differently
   // make sure to filter out the ones that are not possible
@@ -161,13 +185,13 @@ fn find_dir_sequence_2nd(last_pos, next_pos, depth) {
   //|> io.debug()
   |> list.map(fn(candidate) {
     case depth {
-      0 -> candidate
+      0 -> list.length(candidate)
       _ -> find_sequence_2nd(candidate, depth - 1)
     }
   })
-  |> list.sort(fn(a, b) { int.compare(list.length(a), list.length(b)) })
+  |> list.sort(int.compare)
   |> list.first()
-  |> result.unwrap([])
+  |> result.unwrap(0)
 }
 
 fn get_pos(pos) {
